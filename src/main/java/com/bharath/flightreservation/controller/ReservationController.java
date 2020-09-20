@@ -2,6 +2,7 @@ package com.bharath.flightreservation.controller;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -25,16 +26,25 @@ public class ReservationController {
 	@Autowired
 	ReservationService reservationService;
 	
+	@Autowired
+	private static final Logger LOGGER= org.slf4j.LoggerFactory.getLogger(ReservationController.class);
+	
 @RequestMapping("/showCompleteReservation")
 	public String showCompleteReservation(@RequestParam("flightId") Long flightId, ModelMap modelMap){
+	LOGGER.info("Inside showCompleteReservation() invoked with the Flight Id"+flightId);
 	Flight flight= flightRepository.findById(flightId).orElse(null);
 	modelMap.addAttribute("flight",flight);
+	LOGGER.info("Flight is:"+flight);
+	
 		return "completeReservation";
 	}
 
 @RequestMapping(value="/completeReservation",method=RequestMethod.POST)
 public String completeReservation(ReservationRequest request,ModelMap modelMap)
 {
+	
+	LOGGER.info("Inside completeReservation() "+request);
+	
 	Reservation reservation=reservationService.bookFlight(request);
 	modelMap.addAttribute("msg","Reservation created successfully and the id is "+reservation.getId());
 
